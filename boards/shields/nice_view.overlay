@@ -1,0 +1,18 @@
+&i2c1 {
+    status = "okay";
+    ssd1306@3C {
+        compatible = "solomon,ssd1306fb";
+        reg = <0x3C>;
+        label = "SSD1306";
+        width = <128>;
+        height = <64>;
+    };
+};
+
+/ {
+    display: display0 {
+        compatible = "zmk,display";
+        label = "SSD1306";
+        // No widget declarations here
+    };
+};
