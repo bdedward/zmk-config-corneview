@@ -19,10 +19,11 @@ jobs:
           fi
 
       - name: Upload patched ZMK source
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: patched-zmk
           path: zmk
+
 
   build:
     needs: patch
