@@ -3,10 +3,10 @@ name: Build ZMK firmware
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  patch:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ZMK config
+      - name: Checkout user config
         uses: actions/checkout@v3
 
       - name: Clone ZMK firmware
@@ -18,13 +18,14 @@ jobs:
             rm zmk/app/boards/shields/nice_view/widgets/status.c
           fi
 
-      - name: Upload patched ZMK source
-        uses: actions/upload-artifact@v4
-        with:
-          name: patched-zmk
-          path: zmk
+      - name: Set up Zephyr environment
+        uses: zmkfirmware/setup-zephyr@v1
 
-
-  build:
-    needs: patch
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
+      - name: Build firmware
+        run: |
+          west init -l zmk
+          west update
+          west build -s zmk/app -d build \
+            --board nice_nano_v2 \
+            -- -DSHIELD=nice_view \
+               -DZMK_CONFIG=${{ github.workspace }}
