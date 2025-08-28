@@ -97,7 +97,7 @@
                         bindings = <
    &kp  TAB  &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT   &kp CARET &kp AMPS  &kp ASTRK &kp LPAR &kp RPAR &kp BSPC
    &kp UNDER &kp TILDE  &kp LBRC  &kp RBRC &kp PIPE &kp PLUS       &kp MINUS &kp EQUAL &kp LBKT  &kp RBKT &kp BSLH &kp GRAVE
-   &kp LCTRL &trans   &trans &trans   &trans   &trans       &trans &trans &trans &trans &trans &trans
+   &kp LCTRL &out OUT_TOGGLE   &trans &trans   &trans   &trans       &trans &trans &trans &trans &trans &trans
                              &kp LSHFT &kp SPACE &trans         &trans  &kp RET  &kp RALT
                         >;
                 };
@@ -110,7 +110,7 @@
                         bindings = <
    &trans &trans &kp HOME &kp UP &kp END &trans &trans &msc SCRL_UP &mmv MOVE_UP &trans &trans &trans
    &trans &trans &kp LEFT &kp DOWN &kp RIGHT &kp INS &trans &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_RIGHT &trans &trans
-   &out OUT_TOGGLE &trans &trans &trans &trans &trans &trans &msc SCRL_DOWN &trans &trans &trans &trans
+   &trans &trans &trans &trans &trans &trans &trans &msc SCRL_DOWN &trans &trans &trans &trans
                                     &trans &trans  &trans           &mkp LCLK  &mkp MCLK &mkp RCLK
                         >;
                 };
