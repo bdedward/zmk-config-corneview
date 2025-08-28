@@ -24,6 +24,7 @@ jobs:
 
       - name: Clone ZMK firmware
         run: |
+          mkdir zmk
           git clone --branch main https://github.com/zmkfirmware/zmk.git zmk
           ls zmk/west.yml
 
