@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout user config
+      - name: Checkout config repo
         uses: actions/checkout@v3
 
       - name: Install dependencies
@@ -17,29 +17,21 @@ jobs:
             python3-pip python3-setuptools python3-wheel xz-utils file \
             make gcc g++ cmake unzip
 
-      - name: Install west and Zephyr tools
+      - name: Install west
         run: |
           pip3 install --user west
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Clone ZMK firmware
+      - name: Initialize west workspace
         run: |
-          mkdir zmk
-          git clone --branch main https://github.com/zmkfirmware/zmk.git zmk
-          ls zmk/west.yml
-
-
+          west init -l .
+          west update
 
       - name: Remove conflicting shield widget
         run: |
           if [ -f zmk/app/boards/shields/nice_view/widgets/status.c ]; then
             rm zmk/app/boards/shields/nice_view/widgets/status.c
           fi
-
-      - name: Initialize west and update modules
-        run: |
-          west init -l zmk
-          west update
 
       - name: Build firmware
         run: |
