@@ -110,7 +110,7 @@
                         bindings = <
    &trans &trans &kp HOME &kp UP &kp END &trans &trans &msc SCRL_UP &mmv MOVE_UP &trans &trans &trans
    &trans &trans &kp LEFT &kp DOWN &kp RIGHT &kp INS &trans &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_RIGHT &trans &trans
-   &out OUT_TOGGLE, &trans &trans &trans &trans &trans &trans &msc SCRL_DOWN &trans &trans &trans &trans
+   &trans &trans &trans &trans &trans &trans &trans &msc SCRL_DOWN &trans &trans &trans &trans
                                     &trans &trans  &trans           &mkp LCLK  &mkp MCLK &mkp RCLK
                         >;
                 };
