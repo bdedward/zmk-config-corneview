@@ -1,6 +1,29 @@
 name: Build ZMK firmware
+
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ZMK config
+        uses: actions/checkout@v3
+
+      - name: Clone ZMK firmware
+        run: git clone https://github.com/zmkfirmware/zmk.git zmk
+
+      - name: Remove conflicting shield widget
+        run: |
+          if [ -f zmk/app/boards/shields/nice_view/widgets/status.c ]; then
+            rm zmk/app/boards/shields/nice_view/widgets/status.c
+          fi
+
+      - name: Upload patched ZMK source
+        uses: actions/upload-artifact@v3
+        with:
+          name: patched-zmk
+          path: zmk
+
   build:
+    needs: patch
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
