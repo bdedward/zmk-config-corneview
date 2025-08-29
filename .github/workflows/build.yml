@@ -5,27 +5,18 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/zmkfirmware/zmk-dev-arm:latest
 
     steps:
       - name: Checkout config repo
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git wget ninja-build ccache gperf \
-            python3-pip python3-setuptools python3-wheel xz-utils file \
-            make gcc g++ cmake unzip
+      - name: Initialize west workspace from config/
+        run: west init -l config
 
-      - name: Install west
-        run: |
-          pip3 install --user west
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Initialize west workspace
-        run: |
-          west init -l config
-          west update
+      - name: Update modules
+        run: west update
 
       - name: Remove conflicting shield widget
         run: |
