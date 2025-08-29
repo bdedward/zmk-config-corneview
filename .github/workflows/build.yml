@@ -5,7 +5,8 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     container:
-      image: ghcr.io/zmkfirmware/zmk-dev-arm:latest
+      image: zmkfirmware/zmk-dev-arm:3.2-branch
+
     runs-on: ubuntu-latest
 
     steps:
