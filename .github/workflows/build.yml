@@ -14,16 +14,19 @@ jobs:
       - name: Checkout config repo
         uses: actions/checkout@v3
 
-      # 2. Ensure Python3 & pip are available
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      # 2. Install system dependencies
+      - name: Install Linux packages
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential ninja-build gperf ccache \
+            cmake make gcc g++ \
+            python3-pip python3-setuptools python3-wheel \
+            wget xz-utils file unzip
 
-      # 3. Install west (Zephyr’s workspace tool)
+      # 3. Install west so `west init` exists
       - name: Install west
         run: |
-          python3 -m pip install --upgrade pip
           pip3 install --user west
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
@@ -36,54 +39,50 @@ jobs:
           /opt/zephyr-sdk-0.16.3/setup.sh -t all -h
 
       # 5. Point CMake at the new SDK
-      - name: Set Zephyr SDK environment
+      - name: Configure Zephyr SDK env
         run: |
           echo "ZEPHYR_TOOLCHAIN_VARIANT=zephyr" >> $GITHUB_ENV
           echo "ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk-0.16.3" >> $GITHUB_ENV
 
-      # 6. Initialize your west workspace from config/
+      # 6. Init and sync west workspace
       - name: Initialize west workspace
         run: |
           west init -l config
           west update
           west zephyr-export
 
-      # 7. Remove upstream nice_view overlay (so yours takes precedence)
+      # 7. Prune upstream SPI‐based nice_view so your version wins
       - name: Remove upstream nice_view overlay
         run: rm -f zmk/app/boards/shields/nice_view/nice_view.overlay
 
-      # 8. Build the left half
+      # 8. Build left half—note the '-s zmk/app'!
       - name: Build left half
         run: |
-          west build -d build/left -b nice_nano_v2 \
+          west build \
+            -s zmk/app \
+            -d build/left \
+            -b nice_nano_v2 \
             -- -DSHIELD="corne_left nice_view_adapter nice_view" \
-               -DZMK_CONFIG="${{ github.workspace }}/config" \
-               -Dboard_root="${{ github.workspace }}"
+               -DZMK_CONFIG=${{ github.workspace }}/config \
+               -Dboard_root=${{ github.workspace }}
 
-      # 9. Build the right half
+      # 9. Build right half—also with '-s zmk/app'
       - name: Build right half
         run: |
-          west build -d build/right -b nice_nano_v2 \
+          west build \
+            -s zmk/app \
+            -d build/right \
+            -b nice_nano_v2 \
             -- -DSHIELD="corne_right nice_view_adapter nice_view" \
-               -DZMK_CONFIG="${{ github.workspace }}/config" \
-               -Dboard_root="${{ github.workspace }}"
+               -DZMK_CONFIG=${{ github.workspace }}/config \
+               -Dboard_root=${{ github.workspace }}
 
-      # 10. Upload left firmware artifacts
-      - name: Upload left firmware
+      # 10. Upload left artifacts
+      - name: Upload left firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: zmk-left
           path: |
             build/left/*.uf2
             build/left/zephyr/*.hex
-            build/left/zephyr/zephyr.bin
-
-      # 11. Upload right firmware artifacts
-      - name: Upload right firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: zmk-right
-          path: |
-            build/right/*.uf2
-            build/right/zephyr/*.hex
-            build/right/zephyr/zephyr.bin
+            build/left/zephyr/zephyr
