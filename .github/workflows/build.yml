@@ -1,4 +1,3 @@
-# .github/workflows/build.yml  
 name: Build ZMK firmware
 
 on:
@@ -46,37 +45,23 @@ jobs:
           west update
           west zephyr-export
 
+      # --- overwrite the entire upstream nice_view shield folder ---
       - name: Prune upstream nice_view
         run: rm -rf zmk/app/boards/shields/nice_view
 
-      - name: Copy custom nice_view overlay
+      - name: Inject custom nice_view shield
         run: |
           mkdir -p zmk/app/boards/shields/nice_view
+
+          # your SPI‐based overlay
           cp boards/shields/nice_view.overlay \
              zmk/app/boards/shields/nice_view/nice_view.overlay
-             
-      - name: Copy custom nice_view shield files
-        run: |
-          mkdir -p zmk/app/boards/shields/nice_view
-          # Copy your custom overlay
-          cp boards/shields/nice_view.overlay \
-            zmk/app/boards/shields/nice_view/nice_view.overlay
-          # Create the two marker files so Zephyr registers this folder
+
+          # Zephyr marker files (empty is fine)
           touch zmk/app/boards/shields/nice_view/nice_view.dtsi
           touch zmk/app/boards/shields/nice_view/nice_view.yaml
 
-
-      - name: Build left half
-        run: |
-          west build \
-            -s zmk/app \
-            -d build/left \
-            -b nice_nano_v2 \
-            -- -DSHIELD="corne_left nice_view_adapter nice_view" \
-               -DZMK_CONFIG=${{ github.workspace }}/config \
-               -Dboard_root=${{ github.workspace }}
-
-
+      # --- builds ---
       - name: Build left half
         run: |
           west build \
@@ -97,6 +82,7 @@ jobs:
                -DZMK_CONFIG=${{ github.workspace }}/config \
                -Dboard_root=${{ github.workspace }}
 
+      # --- artifact uploads ---
       - name: Upload left firmware
         uses: actions/upload-artifact@v4
         with:
