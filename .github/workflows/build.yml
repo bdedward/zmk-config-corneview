@@ -47,14 +47,24 @@ jobs:
           west zephyr-export
 
       - name: Prune upstream nice_view
-        run: |
-          rm -rf zmk/app/boards/shields/nice_view
+        run: rm -rf zmk/app/boards/shields/nice_view
 
       - name: Copy custom nice_view overlay
         run: |
           mkdir -p zmk/app/boards/shields/nice_view
-          cp boards/shields/nice_view/nice_view.overlay \
-             zmk/app/boards/shields/nice_view/
+          cp boards/shields/nice_view.overlay \
+             zmk/app/boards/shields/nice_view/nice_view.overlay
+
+      - name: Build left half
+        run: |
+          west build \
+            -s zmk/app \
+            -d build/left \
+            -b nice_nano_v2 \
+            -- -DSHIELD="corne_left nice_view_adapter nice_view" \
+               -DZMK_CONFIG=${{ github.workspace }}/config \
+               -Dboard_root=${{ github.workspace }}
+
 
       - name: Build left half
         run: |
