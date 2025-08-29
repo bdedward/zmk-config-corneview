@@ -13,6 +13,11 @@ jobs:
       - name: Checkout config repo
         uses: actions/checkout@v3
 
+      - name: Move overlay into shield directory
+        run:  |
+          mkdir -p boards/shields/nice_view
+          mv boards/shields/nice_view.overlay boards/shields/nice_view/nice_view.overlay
+
       - name: Initialize west workspace
         run: west init -l config
 
