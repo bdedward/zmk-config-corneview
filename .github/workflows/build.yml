@@ -54,6 +54,17 @@ jobs:
           mkdir -p zmk/app/boards/shields/nice_view
           cp boards/shields/nice_view.overlay \
              zmk/app/boards/shields/nice_view/nice_view.overlay
+             
+      - name: Copy custom nice_view shield files
+        run: |
+          mkdir -p zmk/app/boards/shields/nice_view
+          # Copy your custom overlay
+          cp boards/shields/nice_view.overlay \
+            zmk/app/boards/shields/nice_view/nice_view.overlay
+          # Create the two marker files so Zephyr registers this folder
+          touch zmk/app/boards/shields/nice_view/nice_view.dtsi
+          touch zmk/app/boards/shields/nice_view/nice_view.yaml
+
 
       - name: Build left half
         run: |
