@@ -14,9 +14,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Initialize west workspace
-        run: |
-          west init -l config
-          west update
+        run: west init -l config
+
+      - name: Update modules
+        run: west update
+
+      - name: Export Zephyr base
+        run: west zephyr-export
 
       - name: Remove conflicting shield widget
         run: |
@@ -28,4 +32,4 @@ jobs:
         run: |
           west build -s zmk/app -b nice_nano_v2 \
             -- -DSHIELD=nice_view \
-               -DZMK_CONFIG=${{ github.workspace }}
+              -DZMK_CONFIG=${{ github.workspace }}
