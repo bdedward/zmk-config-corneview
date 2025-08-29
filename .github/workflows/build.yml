@@ -31,7 +31,7 @@ jobs:
         run: |
           wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.3/zephyr-sdk-0.16.3_linux-x86_64.tar.xz
           tar xf zephyr-sdk-0.16.3_linux-x86_64.tar.xz
-          sudo mv zephyr-sdk-0.16.3 /opt/zephyr-sdk-0.16.3
+          mv zephyr-sdk-0.16.3 /opt/zephyr-sdk-0.16.3
           /opt/zephyr-sdk-0.16.3/setup.sh -t all -h
 
       - name: Set Zephyr SDK environment
