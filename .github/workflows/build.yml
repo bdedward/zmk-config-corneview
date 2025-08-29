@@ -24,7 +24,7 @@ jobs:
 
       - name: Initialize west workspace
         run: |
-          west init -l .
+          west init -l config
           west update
 
       - name: Remove conflicting shield widget
