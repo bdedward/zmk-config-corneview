@@ -4,19 +4,18 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     container:
       image: ghcr.io/zmkfirmware/zmk-dev-arm:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout config repo
         uses: actions/checkout@v3
 
-      - name: Initialize west workspace from config/
-        run: west init -l config
-
-      - name: Update modules
-        run: west update
+      - name: Initialize west workspace
+        run: |
+          west init -l config
+          west update
 
       - name: Remove conflicting shield widget
         run: |
