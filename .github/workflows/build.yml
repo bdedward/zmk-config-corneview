@@ -13,7 +13,7 @@ jobs:
       - name: Checkout config repo
         uses: actions/checkout@v3
 
-      - name: Install Linux dependencies
+      - name: Install system deps
         run: |
           sudo apt update
           sudo apt install -y \
@@ -34,7 +34,7 @@ jobs:
           mv zephyr-sdk-0.16.3 /opt/zephyr-sdk-0.16.3
           /opt/zephyr-sdk-0.16.3/setup.sh -t all -h
 
-      - name: Configure Zephyr SDK environment
+      - name: Configure Zephyr SDK env
         run: |
           echo "ZEPHYR_TOOLCHAIN_VARIANT=zephyr" >> $GITHUB_ENV
           echo "ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk-0.16.3" >> $GITHUB_ENV
@@ -45,23 +45,6 @@ jobs:
           west update
           west zephyr-export
 
-      # --- overwrite the entire upstream nice_view shield folder ---
-      - name: Prune upstream nice_view
-        run: rm -rf zmk/app/boards/shields/nice_view
-
-      - name: Inject custom nice_view shield
-        run: |
-          mkdir -p zmk/app/boards/shields/nice_view
-
-          # your SPI‐based overlay
-          cp boards/shields/nice_view.overlay \
-             zmk/app/boards/shields/nice_view/nice_view.overlay
-
-          # Zephyr marker files (empty is fine)
-          touch zmk/app/boards/shields/nice_view/nice_view.dtsi
-          touch zmk/app/boards/shields/nice_view/nice_view.yaml
-
-      # --- builds ---
       - name: Build left half
         run: |
           west build \
@@ -69,8 +52,7 @@ jobs:
             -d build/left \
             -b nice_nano_v2 \
             -- -DSHIELD="corne_left nice_view_adapter nice_view" \
-               -DZMK_CONFIG=${{ github.workspace }}/config \
-               -Dboard_root=${{ github.workspace }}
+               -DZMK_CONFIG=${{ github.workspace }}/config
 
       - name: Build right half
         run: |
@@ -79,10 +61,8 @@ jobs:
             -d build/right \
             -b nice_nano_v2 \
             -- -DSHIELD="corne_right nice_view_adapter nice_view" \
-               -DZMK_CONFIG=${{ github.workspace }}/config \
-               -Dboard_root=${{ github.workspace }}
+               -DZMK_CONFIG=${{ github.workspace }}/config
 
-      # --- artifact uploads ---
       - name: Upload left firmware
         uses: actions/upload-artifact@v4
         with:
